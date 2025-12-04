@@ -1,0 +1,29 @@
+{
+  "name": "@google-ads/data-manager-samples",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Code samples for the Data Manager API for Node.js.",
+  "main": "src/index.js",
+  "license": "Apache-2.0",
+  "author": "Google LLC",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "test": "c8 mocha --timeout 600000 test/*.js",
+    "lint": "gts lint",
+    "fix": "gts fix",
+    "ingest-events": "ts-node events/ingest_events.ts",
+    "ingest-audience-members": "ts-node audiences/ingest_audience_members.ts"
+  },
+  "dependencies": {
+    "@google-ads/datamanager": "^0.1.0",
+    "@google-ads/data-manager-util": "^0.2.0",
+    "csv-parser": "^3.0.0",
+    "yargs": "^17.7.2"
+  },
+  "devDependencies": {
+    "@types/yargs": "^17.0.33",
+    "ts-node": "^10.9.2"
+  }
+}

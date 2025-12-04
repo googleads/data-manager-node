@@ -1,0 +1,22 @@
+{
+  "extends": "./node_modules/gts/tsconfig-google.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "rootDir": ".",
+    "baseUrl": ".",
+    "paths": {
+      "@google-ads/data-manager-util": ["util/src"]
+    }
+  },
+  "include": [
+    "src/**/*.ts",
+    "util/src/**/*.ts",
+    "util/test/**/*.ts",
+    "samples/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "build",
+    "dist"
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "name": "data-manager-node",
+  "private": true,
+  "workspaces": [
+    "util",
+    "samples"
+  ],
+  "scripts": {
+    "test": "npm test --workspace util",
+    "lint": "gts lint",
+    "fix": "gts fix",
+    "clean": "gts clean",
+    "build": "tsc",
+    "prepare": "npm run build",
+    "pretest": "npm run build",
+    "posttest": "npm run lint"
+  },
+  "devDependencies": {
+    "c8": "^10.0.0",
+    "chai": "^4.2.0",
+    "gts": "^6.0.2",
+    "mocha": "^11.0.0",
+    "typescript": "^5.6.3",
+    "@types/node": "^22.7.5"
+  }
+}

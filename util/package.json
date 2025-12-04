@@ -1,0 +1,29 @@
+{
+  "name": "@google-ads/data-manager-util",
+  "version": "0.2.0",
+  "description": "A utility library for the Data Manager API for Node.js.",
+  "main": "dist/src/index.js",
+  "types": "dist/src/index.d.ts",
+  "license": "Apache-2.0",
+  "author": "Google LLC",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "files": [
+    "dist/src"
+  ],
+  "scripts": {
+    "test": "c8 mocha --timeout 600000 dist/test/*.js",
+    "lint": "gts lint",
+    "fix": "gts fix",
+    "build": "tsc",
+    "prepare": "npm run build",
+    "pretest": "npm run build"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "@types/chai": "^4.3.0",
+    "@types/mocha": "^10.0.0"
+  }
+}
