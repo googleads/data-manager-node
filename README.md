@@ -5,7 +5,7 @@ Utility library and code samples for working with the
 
 ## Setup instructions
 
-https://developers.google.com/data-manager/api/get-started/set-up-access#node
+https://developers.google.com/data-manager/api/devguides/quickstart/install-library#node.js
 
 ## Repository structure
 
