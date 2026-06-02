@@ -47,6 +47,7 @@ export class UserDataFormatter {
     }
 
     if (domain === 'gmail.com' || domain === 'googlemail.com') {
+      username = username.split('+')[0];
       username = username.replace(/\./g, '');
     }
 

@@ -28,6 +28,9 @@ describe('UserDataFormatter', () => {
       expect(formatter.formatEmailAddress('QuinnY@EXAMPLE.com')).to.equal(
         'quinny@example.com',
       );
+      expect(
+        formatter.formatEmailAddress('user.name+NYC@Example.com'),
+      ).to.equal('user.name+nyc@example.com');
     });
 
     it('should throw an error for invalid email addresses', () => {
@@ -47,6 +50,14 @@ describe('UserDataFormatter', () => {
       expect(
         formatter.formatEmailAddress('jefferson.Loves.hiking@googlemail.com'),
       ).to.equal('jeffersonloveshiking@googlemail.com');
+      expect(
+        formatter.formatEmailAddress('Cloudy.SanFrancisco+shopping@gmail.com'),
+      ).to.equal('cloudysanfrancisco@gmail.com');
+      expect(
+        formatter.formatEmailAddress(
+          'Cloudy.SanFrancisco+shopping@googlemail.com',
+        ),
+      ).to.equal('cloudysanfrancisco@googlemail.com');
     });
   });
 
