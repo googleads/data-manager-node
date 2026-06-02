@@ -1,6 +1,6 @@
 {
   "name": "@google-ads/data-manager-util",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "A utility library for the Data Manager API for Node.js.",
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",

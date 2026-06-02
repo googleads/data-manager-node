@@ -18,7 +18,7 @@
   },
   "dependencies": {
     "@google-ads/datamanager": "^0.1.0",
-    "@google-ads/data-manager-util": "^0.2.0",
+    "@google-ads/data-manager-util": "^0.3.0",
     "csv-parser": "^3.0.0",
     "yargs": "^17.7.2"
   },
