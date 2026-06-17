@@ -31,7 +31,6 @@ const {
   UserIdentifier,
 } = protos.google.ads.datamanager.v1;
 import {UserDataFormatter, Encoding} from '@google-ads/data-manager-util';
-import * as csv from 'csv-parser';
 import * as fs from 'fs';
 import * as yargs from 'yargs';
 
@@ -41,7 +40,7 @@ interface Arguments {
   operating_account_type: string;
   operating_account_id: string;
   audience_id: string;
-  csv_file: string;
+  json_file: string;
   validate_only: boolean;
   login_account_type?: string;
   login_account_id?: string;
@@ -51,8 +50,8 @@ interface Arguments {
 }
 
 interface MemberRow {
-  emails: string[];
-  phoneNumbers: string[];
+  emails?: string[];
+  phoneNumbers?: string[];
 }
 
 /**
@@ -75,8 +74,8 @@ async function main() {
       type: 'string',
       required: true,
     })
-    .option('csv_file', {
-      describe: 'Comma-separated file containing user data to ingest.',
+    .option('json_file', {
+      describe: 'JSON file containing user data to ingest.',
       type: 'string',
       required: true,
     })
@@ -131,7 +130,7 @@ async function main() {
 
   const formatter = new UserDataFormatter();
 
-  const memberRows: MemberRow[] = await readMemberDataFile(argv.csv_file);
+  const memberRows: MemberRow[] = await readMemberData(argv.json_file);
 
   // Builds the audience_members collection for the request.
   const audienceMembers = [];
@@ -139,7 +138,7 @@ async function main() {
     const userData = UserData.create();
 
     // Adds a UserIdentifier for each valid email address for the member.
-    for (const email of memberRow.emails) {
+    for (const email of memberRow.emails || []) {
       try {
         const processedEmail = formatter.processEmailAddress(
           email,
@@ -154,7 +153,7 @@ async function main() {
     }
 
     // Adds a UserIdentifier for each valid phone number for the member.
-    for (const phone of memberRow.phoneNumbers) {
+    for (const phone of memberRow.phoneNumbers || []) {
       try {
         const processedPhone = formatter.processPhoneNumber(
           phone,
@@ -242,6 +241,8 @@ async function main() {
       validateOnly: argv.validate_only,
     });
 
+    console.log(`Request #${requestCount}:\n `, request);
+
     const [response] = await client.ingestAudienceMembers(request);
     console.log(`Response for request #${requestCount}:\n `, response);
   }
@@ -249,47 +250,13 @@ async function main() {
 }
 
 /**
- * Reads the user data from the given CSV file.
- * @param {string} csvFile The path to the CSV file.
+ * Reads the user data from the given JSON file.
+ * @param {string} jsonFile The path to the JSON file.
  * @return {Promise<MemberRow[]>} A promise that resolves with an array of user data.
  */
-function readMemberDataFile(csvFile: string): Promise<MemberRow[]> {
-  return new Promise((resolve, reject) => {
-    const members: MemberRow[] = [];
-    fs.createReadStream(csvFile)
-      .pipe(csv())
-      .on('data', row => {
-        const member: MemberRow = {emails: [], phoneNumbers: []};
-        for (const [fieldName, fieldValue] of Object.entries(row)) {
-          if (!fieldName) {
-            continue;
-          }
-          const value = (fieldValue as string).trim();
-          if (value === '') {
-            continue;
-          }
-
-          if (fieldName.startsWith('email_')) {
-            member.emails.push(value);
-          } else if (fieldName.startsWith('phone_')) {
-            member.phoneNumbers.push(value);
-          } else {
-            console.warn(`Ignoring unrecognized field: ${fieldName}`);
-          }
-        }
-        if (member.emails.length > 0 || member.phoneNumbers.length > 0) {
-          members.push(member);
-        } else {
-          console.warn('Ignoring line. No data.');
-        }
-      })
-      .on('end', () => {
-        resolve(members);
-      })
-      .on('error', error => {
-        reject(error);
-      });
-  });
+async function readMemberData(jsonFile: string): Promise<MemberRow[]> {
+  const data = await fs.promises.readFile(jsonFile, 'utf8');
+  return JSON.parse(data) as MemberRow[];
 }
 
 /**
