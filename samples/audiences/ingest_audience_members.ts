@@ -19,11 +19,13 @@ import {IngestionServiceClient} from '@google-ads/datamanager';
 import {protos} from '@google-ads/datamanager';
 const {
   AudienceMember,
+  CompositeData,
   Destination,
   Encoding: DataManagerEncoding,
   Consent,
   ConsentStatus,
   IngestAudienceMembersRequest,
+  IpData,
   ProductAccount,
   TermsOfService,
   TermsOfServiceStatus,
@@ -52,6 +54,11 @@ interface Arguments {
 interface MemberRow {
   emails?: string[];
   phoneNumbers?: string[];
+  ipInfos?: {
+    ipAddress: string;
+    observeStartTime?: string;
+    observeEndTime?: string;
+  }[];
 }
 
 /**
@@ -167,8 +174,77 @@ async function main() {
       }
     }
 
-    if (userData.userIdentifiers.length > 0) {
-      audienceMembers.push(AudienceMember.create({userData: userData}));
+    // Process IP address information
+    const ipDatas = [];
+    for (const ipInfo of memberRow.ipInfos || []) {
+      const googleAdsAccountTypeValue = ProductAccount.AccountType.GOOGLE_ADS;
+      if (operatingAccountType !== googleAdsAccountTypeValue) {
+        console.log(
+          `Skipping IP address information for operating account type ${operatingAccountType}. ` +
+            `Sending IP address is only supported for operating account type GOOGLE_ADS.`,
+        );
+      }
+
+      const ipAddress = (ipInfo.ipAddress || '').trim();
+      if (!ipAddress) {
+        console.log('Skipping IP address information with no IP address');
+        continue;
+      }
+
+      const ipData = IpData.create({ipAddress});
+
+      if (ipInfo.observeStartTime) {
+        const startTimeStr = ipInfo.observeStartTime.trim();
+        if (startTimeStr) {
+          try {
+            const date = new Date(startTimeStr);
+            if (isNaN(date.getTime())) {
+              throw new Error('Invalid date');
+            }
+            ipData.observeStartTime = {
+              seconds: Math.floor(date.getTime() / 1000),
+              nanos: (date.getTime() % 1000) * 1e6,
+            };
+          } catch (e) {
+            console.log(
+              `Ignoring observe start time '${startTimeStr}' since it can't be parsed`,
+            );
+          }
+        }
+      }
+
+      if (ipInfo.observeEndTime) {
+        const endTimeStr = ipInfo.observeEndTime.trim();
+        if (endTimeStr) {
+          try {
+            const date = new Date(endTimeStr);
+            if (isNaN(date.getTime())) {
+              throw new Error('Invalid date');
+            }
+            ipData.observeEndTime = {
+              seconds: Math.floor(date.getTime() / 1000),
+              nanos: (date.getTime() % 1000) * 1e6,
+            };
+          } catch (e) {
+            console.log(
+              `Ignoring observe end time '${endTimeStr}' since it can't be parsed`,
+            );
+          }
+        }
+      }
+
+      ipDatas.push(ipData);
+    }
+
+    if (userData.userIdentifiers.length > 0 || ipDatas.length > 0) {
+      const compositeData = CompositeData.create();
+      if (userData.userIdentifiers.length > 0) {
+        compositeData.userData = userData;
+      }
+      if (ipDatas.length > 0) {
+        compositeData.ipData = ipDatas;
+      }
+      audienceMembers.push(AudienceMember.create({compositeData}));
     } else {
       console.warn('Ignoring line. No data.');
     }
