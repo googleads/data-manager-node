@@ -189,6 +189,7 @@ async function main() {
           `Skipping IP address information for operating account type ${operatingAccountType}. ` +
             'Sending IP address is only supported for operating account type GOOGLE_ADS.',
         );
+        continue;
       }
 
       const ipAddress = (ipInfo.ipAddress || '').trim();
