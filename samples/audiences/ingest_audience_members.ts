@@ -139,6 +139,13 @@ async function main() {
 
   const memberRows: MemberRow[] = await readMemberData(argv.json_file);
 
+  // Converts the operating account type argument to the corresponding enum
+  // so IP address checks can compare enums to enums.
+  const operatingAccountType = convertToAccountType(
+    argv.operating_account_type,
+    'operating_account_type',
+  );
+
   // Builds the audience_members collection for the request.
   const audienceMembers = [];
   for (const memberRow of memberRows) {
@@ -177,11 +184,10 @@ async function main() {
     // Process IP address information
     const ipDatas = [];
     for (const ipInfo of memberRow.ipInfos || []) {
-      const googleAdsAccountTypeValue = ProductAccount.AccountType.GOOGLE_ADS;
-      if (operatingAccountType !== googleAdsAccountTypeValue) {
+      if (operatingAccountType !== ProductAccount.AccountType.GOOGLE_ADS) {
         console.log(
           `Skipping IP address information for operating account type ${operatingAccountType}. ` +
-            `Sending IP address is only supported for operating account type GOOGLE_ADS.`,
+            'Sending IP address is only supported for operating account type GOOGLE_ADS.',
         );
       }
 
@@ -249,12 +255,6 @@ async function main() {
       console.warn('Ignoring line. No data.');
     }
   }
-
-  // Sets up the Destination.
-  const operatingAccountType = convertToAccountType(
-    argv.operating_account_type,
-    'operating_account_type',
-  );
 
   const destination = Destination.create({
     operatingAccount: ProductAccount.create({
