@@ -159,6 +159,52 @@ describe('UserDataFormatter', () => {
     });
   });
 
+  describe('formatAddressLine', () => {
+    it('should format valid address lines', () => {
+      expect(formatter.formatAddressLine(' 1800 Amphibious Blvd.  ')).to.equal(
+        '1800 amphibious blvd',
+      );
+    });
+
+    it('should throw an error for invalid address lines', () => {
+      expect(() => formatter.formatAddressLine(nullString)).to.throw();
+      expect(() => formatter.formatAddressLine(undefString)).to.throw();
+      expect(() => formatter.formatAddressLine('')).to.throw();
+      expect(() => formatter.formatAddressLine('  ')).to.throw();
+    });
+  });
+
+  describe('formatCity', () => {
+    it('should format valid cities', () => {
+      expect(formatter.formatCity(' Mountain View  ')).to.equal(
+        'mountain view',
+      );
+    });
+
+    it('should throw an error for invalid cities', () => {
+      expect(() => formatter.formatCity(nullString)).to.throw();
+      expect(() => formatter.formatCity(undefString)).to.throw();
+      expect(() => formatter.formatCity('')).to.throw();
+      expect(() => formatter.formatCity('  ')).to.throw();
+    });
+  });
+
+  describe('formatAdministrativeArea', () => {
+    it('should format valid administrative areas', () => {
+      expect(formatter.formatAdministrativeArea(' CA  ')).to.equal('ca');
+      expect(formatter.formatAdministrativeArea(' California  ')).to.equal(
+        'california',
+      );
+    });
+
+    it('should throw an error for invalid administrative areas', () => {
+      expect(() => formatter.formatAdministrativeArea(nullString)).to.throw();
+      expect(() => formatter.formatAdministrativeArea(undefString)).to.throw();
+      expect(() => formatter.formatAdministrativeArea('')).to.throw();
+      expect(() => formatter.formatAdministrativeArea('  ')).to.throw();
+    });
+  });
+
   describe('hashString', () => {
     it('should hash valid strings', () => {
       const hashAndEncode = (s: string) =>
@@ -168,6 +214,9 @@ describe('UserDataFormatter', () => {
       );
       expect(hashAndEncode('+18005550100')).to.equal(
         'fb4f73a6ec5fdb7077d564cdd22c3554b43ce49168550c3b12c547b78c517b30',
+      );
+      expect(hashAndEncode('1800 amphibious blvd')).to.equal(
+        'ff75e73a0e768cc1fa28a64faebbceccb562d7c05f2ffcdd8d100abad73e4579',
       );
     });
 
@@ -279,6 +328,89 @@ describe('UserDataFormatter', () => {
       expect(
         formatter.processPhoneNumber('1-800-555-0100   ', Encoding.BASE64),
       ).to.equal(encodedHash);
+    });
+  });
+
+  describe('processGivenName', () => {
+    it('should process given names with hex encoding', () => {
+      const encodedHash =
+        '128a07bfe2df877c52076e60d7774cf5baaa046c5a6c48daf30ff43ecca2f814';
+      expect(formatter.processGivenName('Givenname', Encoding.HEX)).to.equal(
+        encodedHash,
+      );
+      expect(
+        formatter.processGivenName('  GivenName  ', Encoding.HEX),
+      ).to.equal(encodedHash);
+    });
+
+    it('should process given names with base64 encoding', () => {
+      const encodedHash = 'EooHv+Lfh3xSB25g13dM9bqqBGxabEja8w/0Psyi+BQ=';
+      expect(formatter.processGivenName('Givenname', Encoding.BASE64)).to.equal(
+        encodedHash,
+      );
+    });
+  });
+
+  describe('processFamilyName', () => {
+    it('should process family names with hex encoding', () => {
+      const encodedHash =
+        '77762c287e61ce065bee5c15464012c6fbe088398b8057627d5577249430d574';
+      expect(formatter.processFamilyName('Familyname', Encoding.HEX)).to.equal(
+        encodedHash,
+      );
+    });
+
+    it('should process family names with base64 encoding', () => {
+      const encodedHash = 'd3YsKH5hzgZb7lwVRkASxvvgiDmLgFdifVV3JJQw1XQ=';
+      expect(
+        formatter.processFamilyName('Familyname', Encoding.BASE64),
+      ).to.equal(encodedHash);
+    });
+  });
+
+  describe('processRegionCode', () => {
+    it('should process region codes', () => {
+      expect(formatter.processRegionCode(' us')).to.equal('US');
+    });
+  });
+
+  describe('processPostalCode', () => {
+    it('should process postal codes', () => {
+      expect(formatter.processPostalCode(' 1229-076  ')).to.equal('1229-076');
+    });
+  });
+
+  describe('processAddressLine', () => {
+    it('should process address lines with hex encoding', () => {
+      const encodedHash =
+        'ff75e73a0e768cc1fa28a64faebbceccb562d7c05f2ffcdd8d100abad73e4579';
+      expect(
+        formatter.processAddressLine(' 1800 Amphibious Blvd.  ', Encoding.HEX),
+      ).to.equal(encodedHash);
+    });
+
+    it('should process address lines with base64 encoding', () => {
+      const encodedHash = '/3XnOg52jMH6KKZPrrvOzLVi18BfL/zdjRAKutc+RXk=';
+      expect(
+        formatter.processAddressLine(
+          ' 1800 Amphibious Blvd  ',
+          Encoding.BASE64,
+        ),
+      ).to.equal(encodedHash);
+    });
+  });
+
+  describe('processCity', () => {
+    it('should process cities', () => {
+      expect(formatter.processCity(' Mountain View  ')).to.equal(
+        'mountain view',
+      );
+    });
+  });
+
+  describe('processAdministrativeArea', () => {
+    it('should process administrative areas', () => {
+      expect(formatter.processAdministrativeArea(' CA  ')).to.equal('ca');
     });
   });
 });
