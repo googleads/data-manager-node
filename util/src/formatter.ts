@@ -152,6 +152,30 @@ export class UserDataFormatter {
     return trimmedPostalCode;
   }
 
+  private formatLocationString(value: string, label: string): string {
+    if (!value) {
+      throw new Error(`${label} is null or empty.`);
+    }
+    let formattedValue = value.trim().toLowerCase();
+    formattedValue = formattedValue.replace(/[^\p{L}\p{N}\s]/gu, '');
+    if (!formattedValue) {
+      throw new Error(`${label} is blank or empty.`);
+    }
+    return formattedValue;
+  }
+
+  formatAddressLine(addressLine: string): string {
+    return this.formatLocationString(addressLine, 'Address line');
+  }
+
+  formatCity(city: string): string {
+    return this.formatLocationString(city, 'City');
+  }
+
+  formatAdministrativeArea(administrativeArea: string): string {
+    return this.formatLocationString(administrativeArea, 'Administrative area');
+  }
+
   hashString(s: string): Buffer {
     if (s === null || s === undefined) {
       throw new Error('String is null.');
@@ -204,6 +228,18 @@ export class UserDataFormatter {
 
   processPostalCode(postalCode: string): string {
     return this.formatPostalCode(postalCode);
+  }
+
+  processAddressLine(addressLine: string, encoding: Encoding): string {
+    return this.hashAndEncode(this.formatAddressLine(addressLine), encoding);
+  }
+
+  processCity(city: string): string {
+    return this.formatCity(city);
+  }
+
+  processAdministrativeArea(administrativeArea: string): string {
+    return this.formatAdministrativeArea(administrativeArea);
   }
 
   private hashAndEncode(normalizedString: string, encoding: Encoding): string {
