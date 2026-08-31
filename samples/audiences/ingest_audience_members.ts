@@ -322,6 +322,13 @@ async function main() {
 
     const [response] = await client.ingestAudienceMembers(request);
     console.log(`Response for request #${requestCount}:\n `, response);
+
+    if (response.fieldWarnings && response.fieldWarnings.length > 0) {
+      console.warn(
+        'Request ingested successfully, but field warnings were returned. ' +
+          'Review warning details and update your implementation as needed.',
+      );
+    }
   }
   console.log(`# of requests sent: ${requestCount}`);
 }
