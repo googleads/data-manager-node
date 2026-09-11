@@ -1,0 +1,47 @@
+# Runs tests and formatting checks on pull requests targeted to main
+permissions:
+  contents: read
+name: Presubmit
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  lint:
+    name: Code Format Check
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      with:
+        persist-credentials: false
+    - name: Set up Node.js
+      uses: actions/setup-node@1d0ff469b7ec7b3cb9d8673fde0c81c44821de2a # v4.2.0
+      with:
+        node-version: "20"
+        cache: 'npm'
+    - name: Install dependencies
+      run: npm ci
+    - name: Check formatting
+      run: npm run lint
+
+  test:
+    name: Test (Node ${{ matrix.node-version }})
+    needs: lint
+    strategy:
+      matrix:
+        node-version: ["18", "20", "22"]
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      with:
+        persist-credentials: false
+    - name: Set up Node.js
+      uses: actions/setup-node@1d0ff469b7ec7b3cb9d8673fde0c81c44821de2a # v4.2.0
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+    - name: Install dependencies
+      run: npm ci
+    - name: Run tests
+      run: npm test
