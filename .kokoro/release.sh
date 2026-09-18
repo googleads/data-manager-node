@@ -31,8 +31,6 @@ npm test
 # -----------------------------------------------------------------------------
 # 4. Upload to Internal Exit Gate Artifact Registry
 # -----------------------------------------------------------------------------
-cd "${REPO_DIR}/util"
-
 EXIT_GATE_PROJECT="oss-exit-gate-prod"
 EXIT_GATE_LOCATION="us"
 EXIT_GATE_REPOSITORY="measurement-devrel--npm"
@@ -54,21 +52,23 @@ else
   echo "=== Skipping deletion. Package '${PACKAGE_NAME}' not found in staging repository. 🙂 ==="
 fi
 
-# Configure .npmrc for Artifact Registry according to go/oss-exit-gate-release-npm
+# Configure .npmrc for Artifact Registry according to go/oss-exit-gate-release-npm.
+# Because this project uses npm workspaces, npm ignores .npmrc files inside
+# workspace subdirectories (e.g. util/.npmrc). Writing to repository root ensures
+# npm resolves the registry and credentials properly across all workspace packages.
 cat <<EOF > .npmrc
 @google-ads:registry=https://${EXIT_GATE_LOCATION}-npm.pkg.dev/${EXIT_GATE_PROJECT}/${EXIT_GATE_REPOSITORY}/
 //${EXIT_GATE_LOCATION}-npm.pkg.dev/${EXIT_GATE_PROJECT}/${EXIT_GATE_REPOSITORY}/:always-auth=true
 EOF
-# Clean up .npmrc and manifest.json on exit. google-artifactregistry-auth writes
-# a live GCP OAuth bearer token into .npmrc, so removing it prevents credential
-# leakage into Kokoro logs/artifacts and keeps the local workspace clean.
-trap 'rm -f .npmrc manifest.json 2>/dev/null || true' EXIT
+# Clean up .npmrc on exit. google-artifactregistry-auth writes a live GCP OAuth
+# bearer token into .npmrc, so removing it prevents credential leakage.
+trap "rm -f '${REPO_DIR}/.npmrc' 2>/dev/null || true" EXIT
 
 # Authenticate with Artifact Registry
 npx google-artifactregistry-auth
 
 echo "=== Publishing package to Exit Gate staging repository ==="
-npm publish
+npm publish --workspace util
 
 # -----------------------------------------------------------------------------
 # 5. Trigger Exit Gate Release via GCS Manifest
@@ -98,7 +98,7 @@ cat <<EOF > manifest.json
 EOF
 
 EXIT_GATE_BUCKET="gs://oss-exit-gate-prod-projects-bucket/measurement-devrel/npm/manifests"
-MANIFEST_NAME="manifest-$(date +%Y%m%d%H%M%S).json"
+MANIFEST_NAME="manifest-$(date --utc +%Y%m%d%H%M%S'UTC').json"
 
 echo "=== Uploading manifest to ${EXIT_GATE_BUCKET}/${MANIFEST_NAME} ==="
 gcloud storage cp manifest.json "${EXIT_GATE_BUCKET}/${MANIFEST_NAME}"
