@@ -4,7 +4,10 @@
         "config:recommended",
         "schedule:earlyMondays",
         ":ignoreUnstable",
+        ":separateMajorReleases",
     ],
+    "separateMajorMinor": true,
+    "separateMultipleMajor": true,
     // Apply label to PRs.
     "labels": [
         "dependencies",
