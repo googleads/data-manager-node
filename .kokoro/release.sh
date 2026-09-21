@@ -29,7 +29,7 @@ echo "=== Running tests ==="
 npm test
 
 # -----------------------------------------------------------------------------
-# 4. Upload to Internal Exit Gate Artifact Registry
+# 4. Delete existing files from Exit Gate Artifact Registry
 # -----------------------------------------------------------------------------
 EXIT_GATE_PROJECT="oss-exit-gate-prod"
 EXIT_GATE_LOCATION="us"
@@ -52,6 +52,10 @@ else
   echo "=== Skipping deletion. Package '${PACKAGE_NAME}' not found in staging repository. 🙂 ==="
 fi
 
+# -----------------------------------------------------------------------------
+# 5. Configure and verify npm auth for the Exit Gate Artifact Registry
+# -----------------------------------------------------------------------------
+
 # Configure .npmrc for Artifact Registry according to go/oss-exit-gate-release-npm.
 # Because this project uses npm workspaces, npm ignores .npmrc files inside
 # workspace subdirectories (e.g. util/.npmrc). Writing to repository root ensures
@@ -67,19 +71,26 @@ trap "rm -f '${REPO_DIR}/.npmrc' 2>/dev/null || true" EXIT
 # Authenticate with Artifact Registry
 npx google-artifactregistry-auth
 
-echo "=== Publishing package to Exit Gate staging repository ==="
-npm publish --workspace util
+# -----------------------------------------------------------------------------
+# 6. Trigger Exit Gate Release via GCS Manifest if not a dry run
+# -----------------------------------------------------------------------------
 
-# -----------------------------------------------------------------------------
-# 5. Trigger Exit Gate Release via GCS Manifest
-# -----------------------------------------------------------------------------
-# If DRY_RUN is set to "true", stop here so you can verify AR staging
-# without publishing to public npm.
+# If DRY_RUN is set to "true", stop here so you can verify the process without
+# consuming the version and without publishing to public npm.
 if [[ "${DRY_RUN:-false}" == "true" ]]; then
-  echo "=== DRY_RUN is enabled. Skipping manifest upload to Exit Gate. ==="
-  echo "Artifacts are staged in Artifact Registry."
+  echo "=== DRY_RUN is enabled. Skipping Artifact Registry and manifest upload."
+  echo "===   Uploading to Artifact Registry would claim the current version,  "
+  echo "===   preventing us from actually releasing it via DRY_RUN=false.      "
+  echo "=== Instead, running 'npm pack' to verify as much of the workflow as   "
+  echo "=== possible.                                                          "
+  npm pack --workspace util
+  echo "=== Test of 'npm pack' completed. Listing generated archive."
+  ls -l google-ads-datamanager-util-*.tgz
   exit 0
 fi
+
+echo "=== Publishing package to Exit Gate staging repository ==="
+npm publish --workspace util
 
 echo "=== Creating targeted release manifest for ${PACKAGE_NAME} ==="
 cat <<EOF > manifest.json
