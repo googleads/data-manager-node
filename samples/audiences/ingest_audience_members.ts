@@ -32,7 +32,7 @@ const {
   UserData,
   UserIdentifier,
 } = protos.google.ads.datamanager.v1;
-import {UserDataFormatter, Encoding} from '@google-ads/data-manager-util';
+import {UserDataFormatter, Encoding} from '@google-ads/datamanager-util';
 import * as fs from 'fs';
 import * as yargs from 'yargs';
 

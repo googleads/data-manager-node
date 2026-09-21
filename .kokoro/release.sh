@@ -34,7 +34,7 @@ npm test
 EXIT_GATE_PROJECT="oss-exit-gate-prod"
 EXIT_GATE_LOCATION="us"
 EXIT_GATE_REPOSITORY="measurement-devrel--npm"
-PACKAGE_NAME="@google-ads/data-manager-util"
+PACKAGE_NAME="@google-ads/datamanager-util"
 
 # Delete existing package from the Exit Gate staging repository if present.
 # This prevents upload failures on retries or re-releases of the same version.

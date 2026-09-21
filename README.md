@@ -9,18 +9,18 @@ https://developers.google.com/data-manager/api/devguides/quickstart/install-libr
 
 ## Repository structure
 
-- [`data-manager-util`](data-manager-util): Source code for the utility library.
+- [`util`](util): Source code for the utility library (`@google-ads/datamanager-util`).
 
   Follow the setup instructions to declare a dependency on the current version
   of the utility library in your project. Use the utilities in the library to
   help with common tasks like formatting, hashing, encrypting, and encoding
   data for Data Manager API requests.
 
-- [`data-manager-samples`](data-manager-samples): Code samples for working with
+- [`samples`](samples): Code samples for working with
   the Data Manager API and the utility library.
 
   This project demonstrates how to set up a project that
-  depends on the Data Manager API client library and the `data-manager-util`
+  depends on the Data Manager API client library and the `@google-ads/datamanager-util`
   library.
 
 ## Run samples
