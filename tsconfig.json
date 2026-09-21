@@ -5,7 +5,7 @@
     "rootDir": ".",
     "baseUrl": ".",
     "paths": {
-      "@google-ads/data-manager-util": ["util/src"]
+      "@google-ads/datamanager-util": ["util/src"]
     }
   },
   "include": [
