@@ -34,7 +34,9 @@ npm test
 EXIT_GATE_PROJECT="oss-exit-gate-prod"
 EXIT_GATE_LOCATION="us"
 EXIT_GATE_REPOSITORY="measurement-devrel--npm"
-PACKAGE_NAME="@google-ads/datamanager-util"
+PACKAGE_NAMESPACE="@google-ads"
+PACKAGE_BARE_NAME="datamanager-util"
+PACKAGE_NAME="${PACKAGE_NAMESPACE}/${PACKAGE_BARE_NAME}"
 
 # Delete existing package from the Exit Gate staging repository if present.
 # This prevents upload failures on retries or re-releases of the same version.
@@ -98,9 +100,10 @@ cat <<EOF > manifest.json
   "publish_all": false,
   "publishing_groups": [
     {
+      "namespace": "${PACKAGE_NAMESPACE}",
       "packages": [
         {
-          "name": "${PACKAGE_NAME}"
+          "name": "${PACKAGE_BARE_NAME}"
         }
       ]
     }
@@ -111,6 +114,10 @@ EOF
 EXIT_GATE_BUCKET="gs://oss-exit-gate-prod-projects-bucket/measurement-devrel/npm/manifests"
 MANIFEST_NAME="manifest-$(date --utc +%Y%m%d%H%M%S'UTC').json"
 
+echo "=== Manifest contents:"
+cat manifest.json
+
+echo
 echo "=== Uploading manifest to ${EXIT_GATE_BUCKET}/${MANIFEST_NAME} ==="
 gcloud storage cp manifest.json "${EXIT_GATE_BUCKET}/${MANIFEST_NAME}"
 
