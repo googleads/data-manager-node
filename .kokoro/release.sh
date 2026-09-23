@@ -1,13 +1,20 @@
 #!/bin/bash
 set -euo pipefail
 
+# Default to dry-run for safety unless DRY_RUN=false is explicitly passed.
+DRY_RUN="${DRY_RUN:-true}"
+if [[ "${DRY_RUN}" != "true" && "${DRY_RUN}" != "false" ]]; then
+  echo "ERROR: DRY_RUN must be 'true' or 'false' (got '${DRY_RUN}')." >&2
+  exit 1
+fi
+
 # -----------------------------------------------------------------------------
 # 1. Workspace & Directory Resolution
 # -----------------------------------------------------------------------------
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "${REPO_DIR}"
 
-echo "=== Building and Releasing from: ${REPO_DIR} ==="
+echo "=== Building and Releasing from: ${REPO_DIR} (DRY_RUN=${DRY_RUN}) ==="
 
 # -----------------------------------------------------------------------------
 # 2. Environment & Tooling Setup
@@ -79,7 +86,7 @@ npx google-artifactregistry-auth
 
 # If DRY_RUN is set to "true", stop here so you can verify the process without
 # consuming the version and without publishing to public npm.
-if [[ "${DRY_RUN:-false}" == "true" ]]; then
+if [[ "${DRY_RUN}" == "true" ]]; then
   echo "=== DRY_RUN is enabled. Skipping Artifact Registry and manifest upload."
   echo "===   Uploading to Artifact Registry would claim the current version,  "
   echo "===   preventing us from actually releasing it via DRY_RUN=false.      "
