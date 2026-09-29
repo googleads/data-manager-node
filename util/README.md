@@ -12,6 +12,9 @@ addresses) to meet Data Manager API ingestion requirements.
 
 ## Installation
 
+The `@google-ads/datamanager-util` package is published to
+[npm](https://www.npmjs.com/package/@google-ads/datamanager-util):
+
 ```shell
 npm install @google-ads/datamanager-util
 ```
@@ -25,7 +28,8 @@ with the `@google-ads/datamanager` client library, see the
 ## Documentation & Resources
 
 - [Google Data Manager API Documentation](https://developers.google.com/data-manager/api)
-- [Node.js Quickstart Guide](https://developers.google.com/data-manager/api/devguides/quickstart/install-library#node.js)
+- [Set up API access](https://developers.google.com/data-manager/api/devguides/quickstart/set-up-access)
+- [Install a client library](https://developers.google.com/data-manager/api/devguides/quickstart/install-library#node.js)
 - [GitHub Repository](https://github.com/googleads/data-manager-node)
 - [Issue Tracker](https://github.com/googleads/data-manager-node/issues)
 
