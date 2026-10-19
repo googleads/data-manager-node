@@ -264,7 +264,12 @@ async function main() {
     });
   }
 
-  const client = new IngestionServiceClient();
+  // Creates a client for the ingestion service. Increases the maximum metadata
+  // size to 16MB to prevent RESOURCE_EXHAUSTED errors when responses contain
+  // large error details.
+  const client = new IngestionServiceClient({
+    'grpc.max_metadata_size': 16 * 1024 * 1024,
+  });
 
   let requestCount = 0;
   // Batches requests to send up to the maximum number of events per request.
