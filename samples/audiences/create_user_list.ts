@@ -70,33 +70,6 @@ async function runSample(
   keySpace?: protos.google.ads.datamanager.v1.MobileIdInfo.KeySpace,
   appId?: string,
 ) {
-  // Validates parameters.
-  if (Boolean(loginAccountType) !== Boolean(loginAccountId)) {
-    throw new Error(
-      'Must specify either both or neither of login account type and ' +
-        'login account ID',
-    );
-  }
-  if (Boolean(linkedAccountType) !== Boolean(linkedAccountId)) {
-    throw new Error(
-      'Must specify either both or neither of linked account type and ' +
-        'linked account ID',
-    );
-  }
-  if (uploadKeyType === MOBILE_ID) {
-    if (!keySpace || !appId) {
-      throw new Error(
-        'Must specify both key_space and app_id when upload_key_type is ' +
-          'MOBILE_ID',
-      );
-    }
-  } else if (keySpace || appId) {
-    throw new Error(
-      'key_space and app_id are only supported when upload_key_type is ' +
-        'MOBILE_ID',
-    );
-  }
-
   // Creates a client for UserListService.
   const userListClient = new UserListServiceClient();
 
