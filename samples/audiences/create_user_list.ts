@@ -97,6 +97,9 @@ async function runSample(
     );
   }
 
+  // Creates a client for UserListService.
+  const userListClient = new UserListServiceClient();
+
   // Optional: Sets headers to specify the login-account and linked-account if
   // your credentials aren't for a user in the operating account (for example,
   // when authenticating through a Google Ads manager account or Data Partner
@@ -104,13 +107,17 @@ async function runSample(
   const headers: {[key: string]: string} = {};
 
   if (loginAccountType && loginAccountId) {
-    headers['login-account'] =
-      `accountTypes/${loginAccountType}/accounts/${loginAccountId}`;
+    headers['login-account'] = userListClient.accountPath(
+      loginAccountType,
+      loginAccountId,
+    );
   }
 
   if (linkedAccountType && linkedAccountId) {
-    headers['linked-account'] =
-      `accountTypes/${linkedAccountType}/accounts/${linkedAccountId}`;
+    headers['linked-account'] = userListClient.accountPath(
+      linkedAccountType,
+      linkedAccountId,
+    );
   }
 
   // Configures the Customer Match user list.
@@ -173,12 +180,12 @@ async function runSample(
     ingestedUserListInfo,
   });
 
-  // Creates a client for UserListService.
-  const userListClient = new UserListServiceClient();
-
   // Builds the request targeting the parent operating account.
   const request = CreateUserListRequest.create({
-    parent: `accountTypes/${operatingAccountType}/accounts/${operatingAccountId}`,
+    parent: userListClient.accountPath(
+      operatingAccountType,
+      operatingAccountId,
+    ),
     userList,
     // Sets validate_only. If true, then the Data Manager API only
     // validates the request but doesn't apply changes.
