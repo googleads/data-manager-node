@@ -14,7 +14,8 @@
     "lint": "gts lint",
     "fix": "gts fix",
     "ingest-events": "ts-node events/ingest_events.ts",
-    "ingest-audience-members": "ts-node audiences/ingest_audience_members.ts"
+    "ingest-audience-members": "ts-node audiences/ingest_audience_members.ts",
+    "create-user-list": "ts-node audiences/create_user_list.ts"
   },
   "dependencies": {
     "@google-ads/datamanager": "^1.0.0",
