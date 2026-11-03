@@ -21,7 +21,7 @@
     "@google-ads/datamanager": "^1.0.0",
     "@google-ads/datamanager-util": "^0.4.1",
     "csv-parser": "^3.0.0",
-    "yargs": "^17.7.2"
+    "yargs": "^18.0.0"
   },
   "devDependencies": {
     "@types/yargs": "^17.0.33",
