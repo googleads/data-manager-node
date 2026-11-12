@@ -147,7 +147,7 @@ async function main() {
         seconds: Math.floor(date.getTime() / 1000),
         nanos: (date.getTime() % 1000) * 1e6,
       };
-    } catch (e) {
+    } catch {
       console.warn(
         `Invalid timestamp format: ${eventRow.timestamp}. Skipping row.`,
       );
@@ -196,7 +196,7 @@ async function main() {
           userData.userIdentifiers.push(
             UserIdentifier.create({emailAddress: processedEmail}),
           );
-        } catch (e) {
+        } catch {
           console.warn(`Invalid email address: ${email}. Skipping.`);
         }
       }
@@ -213,7 +213,7 @@ async function main() {
           userData.userIdentifiers.push(
             UserIdentifier.create({phoneNumber: processedPhone}),
           );
-        } catch (e) {
+        } catch {
           console.warn(`Invalid phone: ${phoneNumber}. Skipping.`);
         }
       }

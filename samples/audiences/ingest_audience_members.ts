@@ -161,7 +161,7 @@ async function main() {
         userData.userIdentifiers.push(
           UserIdentifier.create({emailAddress: processedEmail}),
         );
-      } catch (e) {
+      } catch {
         // Skip invalid input.
       }
     }
@@ -176,7 +176,7 @@ async function main() {
         userData.userIdentifiers.push(
           UserIdentifier.create({phoneNumber: processedPhone}),
         );
-      } catch (e) {
+      } catch {
         // Skip invalid input.
       }
     }
@@ -212,7 +212,7 @@ async function main() {
               seconds: Math.floor(date.getTime() / 1000),
               nanos: (date.getTime() % 1000) * 1e6,
             };
-          } catch (e) {
+          } catch {
             console.log(
               `Ignoring observe start time '${startTimeStr}' since it can't be parsed`,
             );
@@ -232,7 +232,7 @@ async function main() {
               seconds: Math.floor(date.getTime() / 1000),
               nanos: (date.getTime() % 1000) * 1e6,
             };
-          } catch (e) {
+          } catch {
             console.log(
               `Ignoring observe end time '${endTimeStr}' since it can't be parsed`,
             );
